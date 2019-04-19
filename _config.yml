@@ -10,7 +10,7 @@ permalink: /posts/:categories/:title
 title: Yubao-wss
 url: http://Yubao-wss.github.io
 baseurl: '' # 假如你的博客是建在某个目录下的，请在这里加上目录名，并且下面配置的所有链接里的`/public`前也要加，即`/your_baseurl/public`。这一项结尾不要有'/'
-author: WuK
+author: 
 
 head: # 删改前确定知道自己在做什么
   - tag: meta # Enable responsiveness on mobile devices
@@ -70,13 +70,13 @@ head: # 删改前确定知道自己在做什么
       - key: rel
         value: apple-touch-icon-precomposed
       - key: href
-        value: http://www.gravatar.com/avatar/a12c5fff23dde00df79af9aca4e7b6e4?d=wavatar&s=144
+        value: https://s.gravatar.com/avatar/1ef4384f26458fa12765ce8b7f799629?s=80
   - tag: link # 小图标，同上
     var:
       - key: rel
         value: 'shortcut icon'
       - key: href
-        value: http://www.gravatar.com/avatar/a12c5fff23dde00df79af9aca4e7b6e4?d=wavatar&s=32
+        value: https://s.gravatar.com/avatar/1ef4384f26458fa12765ce8b7f799629?s=80
   - tag: link # 下面是博客的css，有些插件的css是单独在插件里引用的，假如需要自己的css可以仿照去加在后面
     var:
       - key: rel
@@ -167,7 +167,7 @@ baidu-push: true
 sidebar:
   avatar: # 侧边栏显示的头像
     enable: true
-    img: https://github.com/Yubao-wss/Yubao-wss.github.io/blob/master/public/image/headshot.jpg # 头像的地址
+    img: https://s.gravatar.com/avatar/1ef4384f26458fa12765ce8b7f799629?s=80 # 头像的地址
     info: <br>我是Waston<br>喜欢技术<br>热爱生活<br> # 头像背后的信息
   # description: '<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=100% height=52 src="//music.163.com/outchain/player?type=0&id=155059595&auto=0&height=32"></iframe>'
   social:
@@ -178,7 +178,7 @@ sidebar:
       class: 'fa fa-qq fa-fw'
     - title: thanks8822 # weixin
       class: 'fa fa-weixin fa-fw'
-    - title: 371134638.com # email
+    - title: 371134638@qq.com # email
       href: mailto:wu.kan@foxmail.com
       class: 'fa fa-envelope fa-fw'
     - title: github # email

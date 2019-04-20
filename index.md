@@ -2,7 +2,7 @@
 layout: page
 title: Waston
 showtag:
-  - ICPC模板
+  - Posts
 ---
 ### 近期
 {% for post in site.posts limit:5 %}

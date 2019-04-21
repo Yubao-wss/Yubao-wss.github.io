@@ -3,6 +3,7 @@ layout: page
 title: Waston
 showtag:
   - Posts
+  - 心情
 ---
 ### 近期
 {% for post in site.posts limit:5 %}

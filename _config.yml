@@ -179,7 +179,7 @@ sidebar:
     - title: thanks8822 # weixin
       class: 'fa fa-weixin fa-fw'
     - title: 371134638@qq.com # email
-      href: mailto:wu.kan@foxmail.com
+      href: mailto:371134638@qq.com
       class: 'fa fa-envelope fa-fw'
     - title: github # email
       href: https://github.com/Yubao-wss
@@ -204,14 +204,14 @@ sidebar:
     # - title: '<span class="fa fa-file-code-o fa-fw"></span>&nbsp;ICPC模板'
     #   href: /ICPC-Template
 
-simple-jekyll-search:
-  enable: true
-  src: https://cdnjs.cloudflare.com/ajax/libs/simple-jekyll-search/1.7.2/simple-jekyll-search.min.js
-  placeholder: 搜索博文
-  noResultsText: 没有搜索到文章 # 无搜索数据提示语
-  limit: 2 # 返回最大文章数
-  fuzzy: false # 是否模糊匹配
-  json: /public/simple-jekyll-search/search.json
+# simple-jekyll-search:
+#   enable: true
+#   src: https://cdnjs.cloudflare.com/ajax/libs/simple-jekyll-search/1.7.2/simple-jekyll-search.min.js
+#   placeholder: 搜索博文
+#   noResultsText: 没有搜索到文章 # 无搜索数据提示语
+#   limit: 2 # 返回最大文章数
+#   fuzzy: false # 是否模糊匹配
+#   json: /public/simple-jekyll-search/search.json
 
 jekyll-table-of-contents:
   enable: true
@@ -253,9 +253,9 @@ post:
       enable: true
       unit: 分
       divided_by: 300
-    visitor: # 需要开启valine的visitor选项使之开始计数; 可能会和busuanzi统计的有出入
-      enable: true
-      unit: 次
+    # visitor: # 需要开启valine的visitor选项使之开始计数; 可能会和busuanzi统计的有出入
+    #   enable: true
+    #   unit: 次
     copyright: '<span class="fa fa-creative-commons"></span>&nbsp;<a rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">BY-SA 4.0</a>（除特别声明或转载文章外）'
   related:
     enable: false

@@ -184,12 +184,12 @@ sidebar:
     - title: github # email
       href: https://github.com/Yubao-wss
       class: 'fa fa-github fa-fw'
-    - title: WuK # codeforces
-      href: https://codeforces.com/profile/WuK
-      class: 'fa fa-bar-chart fa-fw'
-    - title: WuK # vjudge
-      href: https://vjudge.net/user/WuK
-      class: 'fa fa-smile-o fa-fw'
+    # - title: WuK # codeforces
+    #   href: https://codeforces.com/profile/WuK
+    #   class: 'fa fa-bar-chart fa-fw'
+    # - title: WuK # vjudge
+    #   href: https://vjudge.net/user/WuK
+    #   class: 'fa fa-smile-o fa-fw'
   nav:
     - title: '<span class="fa fa-home fa-fw"></span>&nbsp;首页'
       href: /
@@ -201,15 +201,15 @@ sidebar:
       href: /tags
     - title: '<span class="fa fa-archive fa-fw"></span>&nbsp;归档'
       href: /archive
-    - title: '<span class="fa fa-file-code-o fa-fw"></span>&nbsp;ICPC模板'
-      href: /ICPC-Template
+    # - title: '<span class="fa fa-file-code-o fa-fw"></span>&nbsp;ICPC模板'
+    #   href: /ICPC-Template
 
 simple-jekyll-search:
   enable: true
   src: https://cdnjs.cloudflare.com/ajax/libs/simple-jekyll-search/1.7.2/simple-jekyll-search.min.js
   placeholder: 搜索博文
   noResultsText: 没有搜索到文章 # 无搜索数据提示语
-  limit: 10 # 返回最大文章数
+  limit: 2 # 返回最大文章数
   fuzzy: false # 是否模糊匹配
   json: /public/simple-jekyll-search/search.json
 

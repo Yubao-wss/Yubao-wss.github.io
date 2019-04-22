@@ -5,7 +5,7 @@ pre {
   overflow: auto;
 }
 .masthead {
-  background-color: #fff;
+  background-color: rgb(255, 255, 255);
   padding-top:    .8rem;
   padding-bottom: .8rem;
 }

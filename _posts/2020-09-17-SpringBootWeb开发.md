@@ -415,7 +415,7 @@ spring.mvc.format.date=dd-MM-yyyy
 
 设置后，前端表单传参需按设置的格式写，String才能转换为Date，否则会报错
 
-### 封装参数
+### SpringMvc封装参数
 
 前台传后台： 把需要传递的参数放到控制器方法上（参数方式），当需要访问这个方法时，方法里面的对象会被自动创建，需要封装的参数自动封装到方法对象中。
 
@@ -470,7 +470,7 @@ public String addEmp(Employee employee){
 
 - 如果没有SpringMVC，就需要我们手动request.getParameter(); 使用HttpRequest对象自己获取表单参数。
 
-  而SpringMVC根据方法上的参数类型自动创建相应对象。当然方法上的**参数名称要与表单的name属性的值相对应**。
+  而SpringMVC根据方法上的参数类型自动创建相应对象。当然，**Employee类中属性的名称要与表单的name属性的值一致！！**。
 
 
 

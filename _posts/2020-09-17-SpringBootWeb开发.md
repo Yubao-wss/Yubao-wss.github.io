@@ -249,21 +249,21 @@ SpringBoot中，有非常多的xxxx Configuration帮助我们进行扩展配置�
 
 SpringMVC整体流程：
 
-![SpringMVC整体流程](.\public\image\SpringMVC整体流程.png)
+![SpringMVC整体流程](https://cdn.img.wenhairu.com/images/2020/10/09/CQpMB.png)
 
 SpringMVC详细流程:
 
-![MVC流程](..\public\image\MVC流程.png)
+![MVC流程](https://cdn.img.wenhairu.com/images/2020/10/09/CQ1aN.png)
 
 ### 页面国际化
 
 1. 建立这些文件
 
-2. ![国际化](..\public\image\国际化.PNG)
+2. ![国际化](https://cdn.img.wenhairu.com/images/2020/10/09/CQ5tn.png)
 
 3. 这样操作
 
-4. ![国际化](..\public\image\国际化2.PNG)
+4. ![国际化](https://cdn.img.wenhairu.com/images/2020/10/09/CQyJA.png)
 
 5. 配置文件中写spring.messages.basename=i18n.login；
 

@@ -249,7 +249,7 @@ SpringBoot中，有非常多的xxxx Configuration帮助我们进行扩展配置�
 
 SpringMVC整体流程：
 
-![SpringMVC整体流程](..\public\image\SpringMVC整体流程.png)
+![SpringMVC整体流程](.\public\image\SpringMVC整体流程.png)
 
 SpringMVC详细流程:
 

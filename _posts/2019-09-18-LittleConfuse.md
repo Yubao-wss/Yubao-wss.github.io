@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 小迷茫
+title: LittleConfuse
 categories:
   - ACM
   - Template

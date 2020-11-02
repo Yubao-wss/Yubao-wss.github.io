@@ -249,21 +249,21 @@ SpringBoot中，有非常多的xxxx Configuration帮助我们进行扩展配置�
 
 SpringMVC整体流程：
 
-![SpringMVC整体流程](https://cdn.img.wenhairu.com/images/2020/10/09/CQpMB.png)
+![SpringMVC整体流程](https://img.wenhairu.com/images/2020/10/09/CQpMB.png)
 
 SpringMVC详细流程:
 
-![MVC流程](https://cdn.img.wenhairu.com/images/2020/10/09/CQ1aN.png)
+![MVC流程](https://img.wenhairu.com/images/2020/10/09/CQ1aN.png)
 
 ### 页面国际化
 
 1. 建立这些文件
 
-2. ![国际化](https://cdn.img.wenhairu.com/images/2020/10/09/CQ5tn.png)
+2. ![国际化](https://img.wenhairu.com/images/2020/10/09/CQ5tn.png)
 
 3. 这样操作
 
-4. ![国际化](https://cdn.img.wenhairu.com/images/2020/10/09/CQyJA.png)
+4. ![国际化](https://img.wenhairu.com/images/2020/10/09/CQyJA.png)
 
 5. 配置文件中写spring.messages.basename=i18n.login；
 
@@ -470,7 +470,7 @@ public String addEmp(Employee employee){
 
 - 如果没有SpringMVC，就需要我们手动request.getParameter(); 使用HttpRequest对象自己获取表单参数。
 
-  而SpringMVC根据方法上的参数类型自动创建相应对象。当然，**Employee类中属性的名称要与表单的name属性的值一致！！**。
+  而SpringMVC根据方法上的参数类型自动创建相应对象。当然，**Employee类中属性的名称要与表单的name属性的值一致！！**
 
 
 

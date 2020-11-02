@@ -21,7 +21,7 @@ date: 2020-10-14 14:00:00
 
 服务架构模式发展历程如下图：
 
-![dubbo-architecture-roadmap](https://cdn.img.wenhairu.com/images/2020/10/14/CPmq3.jpg)
+![dubbo-architecture-roadmap](https://img1.wenhairu.com/images/2020/10/14/CPmq3.jpg)
 
 - 一个SpringBoot项目可以看做是一个MVC服务器，而RPC模式可以看作是多个SpringBoot项目的集合
 - 这一群SpringBoot项目中可以分为两类：Service和API
@@ -33,7 +33,7 @@ date: 2020-10-14 14:00:00
 
 Dubbo框架下生产者与消费者工作流程图如下：
 
-![architecture](https://cdn.img.wenhairu.com/images/2020/10/14/CP8dK.png)
+![architecture](https://img1.wenhairu.com/images/2020/10/14/CP8dK.png)
 
 - 流程的顺序是生产者将自己注册在注册中心--->消费者订阅注册中心的服务--->注册中心通知消费者--->消费者调用生产者的服务--->服务调用完成，在监控中心进行记录
 - 可以看到，而其中除了消费者调用生产者是同步的，其余的流程都是异步的

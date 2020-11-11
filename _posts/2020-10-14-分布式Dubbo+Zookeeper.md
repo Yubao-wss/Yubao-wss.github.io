@@ -357,3 +357,8 @@ Zookeeper就是上文所提到的注册中心的实现
        ```
 
    
+
+   补充：
+
+   - 示例中的@Reference也可以用**@Autowired**代替
+   - consumer模块中不一定要一个一个复制provider里的接口，可以直接引入provider的jar包

@@ -491,3 +491,217 @@ MyBatisPlus提供了一个性能分析插件，用于实现性能拦截器，输
    ```
 
 2. 这时，执行的sql时间超过限制就会终止，并且报错
+
+#### 条件构造器Wrapper
+
+在进行数据库操作时，所调用的函数如：selectList等，都需要传入一个参数，Wrapper类型，用于创建条件sql
+
+**使用方法：**
+
+```java
+package cn.waston.test_mp;
+
+import cn.waston.test_mp.mapper.UserMapper;
+import cn.waston.test_mp.pojo.User;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Description:
+ * @Author: Waston
+ * @Date: 2020/11/12 9:20
+ */
+@SpringBootTest
+public class WrapperTest {
+    @Autowired
+    private UserMapper userMapper;
+
+    @Test
+    void testWrapper1(){
+        //先构造QueryWrapper
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.isNotNull("username")//非空
+                .ge("id",25l);//>=
+
+        //构造条件查询
+        userMapper.selectList(wrapper).forEach(System.out::println);
+    }
+
+    /**
+     * 按名字单独查询一个
+     * 若结果集有多个，selectOne会报错
+     */
+    @Test
+    void testWrapper2(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username","tonny");
+
+        //构造条件查询
+        User user = userMapper.selectOne(wrapper);
+    }
+
+    /**
+     * 区间查询
+     */
+    @Test
+    void testWrapper3(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.between("id",20l,28l);
+
+        Integer integer = userMapper.selectCount(wrapper);
+        System.out.println(integer);
+    }
+
+    /**
+     * 模糊查询
+     */
+    @Test
+    void testWrapper4(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.notLike("address","x")
+                .likeLeft("username","m");
+
+        List<Map<String, Object>> maps = userMapper.selectMaps(wrapper);
+        maps.forEach(System.out::println);
+    }
+
+    /**
+     * 复杂查询
+     */
+    @Test
+    void testWrapper5(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        //构造一个in查询
+        wrapper.inSql("id","select id from user where id<25");
+
+        List<Object> objects = userMapper.selectObjs(wrapper);
+        objects.forEach(System.out::println);
+    }
+
+    /**
+     * 排序
+     */
+    @Test
+    void testWrapper6(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        //id降序
+        wrapper.orderByDesc("id");
+
+        List<Object> objects = userMapper.selectObjs(wrapper);
+        objects.forEach(System.out::println);
+    }
+}
+```
+
+#### 代码自动生成
+
+MyBatisPlus提供了一个代码生成器：AutoGenerator
+
+通过它，我们可以快速生成Entity、Mapper、Mapper XML、Service、Controller等模块的代码
+
+**使用方法：**
+
+1. 添加依赖
+
+   ```xml
+   <dependency>
+       <groupId>org.apache.velocity</groupId>
+       <artifactId>velocity-engine-core</artifactId>
+       <version>2.0</version>
+   </dependency>
+   ```
+
+2. 构建代码生成器类
+
+   ```java
+   package cn.waston.test_mp.tools;
+   
+   import com.baomidou.mybatisplus.annotation.DbType;
+   import com.baomidou.mybatisplus.annotation.FieldFill;
+   import com.baomidou.mybatisplus.annotation.IdType;
+   import com.baomidou.mybatisplus.generator.AutoGenerator;
+   import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+   import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+   import com.baomidou.mybatisplus.generator.config.PackageConfig;
+   import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+   import com.baomidou.mybatisplus.generator.config.po.TableFill;
+   import com.baomidou.mybatisplus.generator.config.rules.DateType;
+   import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+   
+   import java.util.ArrayList;
+   
+   /**
+    * @Description:
+    * @Author: Waston
+    * @Date: 2020/11/12 10:22
+    */
+   public class MyCode {
+       public static void main(String[] args) {
+           //new一个AutoGenerator对象
+           AutoGenerator autoGenerator = new AutoGenerator();
+   
+           //代码生成路径
+           GlobalConfig gc = new GlobalConfig();//全局配置类
+           String projectPath = System.getProperty("user.dir");//获取当前项目路径
+           gc.setOutputDir(projectPath + "/src/main/java");//配置具体路径
+           gc.setAuthor("waston");//设置代码作者
+           gc.setOpen(false);//是否打开路径文件夹
+           gc.setFileOverride(false);//是否覆盖
+           gc.setServiceName("%sService");//去除Service的I前缀
+           gc.setIdType(IdType.AUTO);//id策略
+           gc.setDateType(DateType.ONLY_DATE);//日期类型
+           gc.setSwagger2(true);//配置swagger
+           autoGenerator.setGlobalConfig(gc);
+   
+           //设置数据源
+           DataSourceConfig dsc = new DataSourceConfig();
+           dsc.setUrl("jdbc:mysql://localhost:3306/mybatis?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8");
+           dsc.setDriverName("com.mysql.cj.jdbc.Driver");
+           dsc.setUsername("root");
+           dsc.setPassword("password");
+           dsc.setDbType(DbType.MYSQL);
+           autoGenerator.setDataSource(dsc);
+   
+           //包名配置
+           PackageConfig pc = new PackageConfig();
+           pc.setModuleName("test_mp2");
+           pc.setParent("cn.waston");
+           pc.setEntity("entity");
+           pc.setMapper("mapper");
+           pc.setService("service");
+           pc.setController("controller");
+           autoGenerator.setPackageInfo(pc);
+   
+           //Entity配置
+           StrategyConfig st = new StrategyConfig();
+           st.setInclude("items");//要映射的表，可以传多个参数
+           st.setNaming(NamingStrategy.underline_to_camel);//下划线转驼峰
+           st.setColumnNaming(NamingStrategy.underline_to_camel);
+           //st.setSuperEntityClass("");//自己的父类实体，没有就不用配置
+           //st.setEntityLombokModel(true);//是否启用Lombok
+           //st.setRestControllerStyle(true);//是否启用链式编程
+           st.setLogicDeleteFieldName("deleted");//逻辑删除
+           //自动填充策略
+           TableFill createTime = new TableFill("create_time", FieldFill.INSERT);
+           TableFill updateTime = new TableFill("update_time", FieldFill.INSERT_UPDATE);
+           ArrayList<TableFill> tableFills = new ArrayList<>();
+           tableFills.add(createTime);
+           tableFills.add(updateTime);
+           st.setTableFillList(tableFills);
+           st.setVersionFieldName("version");//乐观锁
+           st.setRestControllerStyle(true);//是否开启Controller RestFul风格
+           st.setControllerMappingHyphenStyle(true);//请求url，下划线命名
+           autoGenerator.setStrategy(st);
+   
+   
+           autoGenerator.execute();//执行
+       }
+   }
+   ```
+
+3. 修改其中的配置，执行主方法

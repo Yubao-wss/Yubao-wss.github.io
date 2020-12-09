@@ -31,24 +31,24 @@ head: # 删改前确定知道自己在做什么
         value: content-type
       - key: content
         value: 'text/html; charset=utf-8'
-  - tag: meta # google站点验证
-    var:
-      - key: name
-        value: google-site-verification
-      - key: content
-        value: YIKi1rBnyUaS-DMYiluseI5kZzTwjCkTFmKkSkMZDJk
-  - tag: meta # baidu站点验证
-    var:
-      - key: name
-        value: baidu-site-verification
-      - key: content
-        value: bEFDJ1LvXb
-  - tag: meta # yandex站点验证
-    var:
-      - key: name
-        value: yandex-verification
-      - key: content
-        value: 52253e02830b443c
+  # - tag: meta # google站点验证
+  #   var:
+  #     - key: name
+  #       value: google-site-verification
+  #     - key: content
+  #       value: YIKi1rBnyUaS-DMYiluseI5kZzTwjCkTFmKkSkMZDJk
+  # - tag: meta # baidu站点验证
+  #   var:
+  #     - key: name
+  #       value: baidu-site-verification
+  #     - key: content
+  #       value: bEFDJ1LvXb
+  # - tag: meta # yandex站点验证
+  #   var:
+  #     - key: name
+  #       value: yandex-verification
+  #     - key: content
+  #       value: 52253e02830b443c
   - tag: link
     var:
       - key: rel
@@ -123,13 +123,13 @@ script: # 需要在正文前调用的脚本
   - src: //cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js # jQuery
   - src: //cdn1.lncld.net/static/js/3.0.4/av-min.js # Leancloud
   - src: //api.dujin.org/js/jiazhiguan.js # shehuizhuyi
-  - src: /public/canvas-ribbon/canvas-ribbon.js # ribbon
+  - src: /public/ribbon/ribbon.js # ribbon
 
-mermaid: # https://github.com/knsv/mermaid
-  enable: true
-  src: https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js
-  stylesheet: https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.css
-  markdown-expand: true
+# mermaid: # https://github.com/knsv/mermaid
+#   enable: true
+#   src: https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.js
+#   stylesheet: https://unpkg.com/mermaid@7.1.0/dist/mermaid.min.css
+#   markdown-expand: true
 
 PrismJS: # 代码高亮插件，可以在https://prismjs.com/download.html自己定制，将定制的js和css替换我的/public/PrismJS下的对应文件即可。我这里只导入了三个自己喜欢的插件。
   enable: true
@@ -263,11 +263,11 @@ post:
   reward:
     enable: true
     text: 如果我的博客帮助到你，可以请我喝一杯咖啡~
-    img: # 万一真的有人打赏呢~
-      - id: wechat
-        src: /public/image/wechatpay.jpg
-      - id: alipay
-        src: /public/image/alipay.jpg
+    # img: # 万一真的有人打赏呢~
+    #   - id: wechat
+    #     src: /public/image/wechatpay.jpg
+    #   - id: alipay
+    #     src: /public/image/alipay.jpg
 
 valine: # depend av-min.js #Leancloud
   enable: true
@@ -280,10 +280,10 @@ valine: # depend av-min.js #Leancloud
   placeholder: 在这里评论吧！
   visitor: true
 
-page404:
-  search_children: # 腾讯公益
-    enable: true
-    src: //qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js
-    charset: utf-8
-    homePageUrl: '/'
-    homePageName: 回到我的主页
+# page404:
+#   search_children: # 腾讯公益
+#     enable: true
+#     src: //qzonestyle.gtimg.cn/qzone/hybrid/app/404/search_children.js
+#     charset: utf-8
+#     homePageUrl: '/'
+#     homePageName: 回到我的主页

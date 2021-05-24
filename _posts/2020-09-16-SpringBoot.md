@@ -17,13 +17,11 @@ date: 2020-09-16 14:46:00
 3. 基于切面（AOP）和惯例进行声明式编程
 4. 通过切面和模板减少样式代码
 
-## Spingboot
+## SpingBoot
 
 是一个javaweb的**开发框架**，和SpringMVC类似，对比其他javaweb框架的优势是**约定大于配置**。
 
 不是新的框架，默认配置了很多框架的使用方式，就像是maven整合了所有的jar包，spring boot整合了所有的框架
-
-
 
 ## 微服务
 
@@ -38,7 +36,7 @@ date: 2020-09-16 14:46:00
 
 
 
-## Spingboot原理
+## SpingBoot原理
 
 #### 自动配置：
 
@@ -87,6 +85,10 @@ META-INF/spring.factories（org.springframework.boot:springboot:autoconfigure包
 7. 有了自动配置类，免去了我们手动编写配置文件的工作
 
 
+
+#### 一段话解释SpringBoot自动配置原理
+
+Spring Boot启动的时候会通过@EnableAutoConfiguration注解找到**META-INF/spring.factories**配置文件中的所有自动配置类，并对其进行加载，而这些自动配置类都是以AutoConfiguration结尾来命名的，它实际上就是一个JavaConfig形式的Spring容器配置类，它能通过以Properties结尾命名的类中取得在全局配置文件中配置的属性如：server.port，而XxxxProperties类是通过@ConfigurationProperties注解与全局配置文件中对应的属性进行绑定的。 
 
 【**精髓**】：
 

@@ -119,7 +119,38 @@ date: 2021-04-26 14:00:00
 
   当遇到流量洪流时，由于服务器资源有限，可能需要暂停（关闭）一些服务，来为接收洪流或重要性更高的服务腾出空间，而为了避免雪崩以及给在此时访问被关闭服务的客户更好的体验，需要提供【降级服务】。
 
-- 
+
+### Zuul
+
+一个路由网关。可以与Eureka整合在一起，将Zuul自身注册为Eureka服务治理下的应用，同时从Eureka中获得其他微服务的消息。
+
+#### 功能
+
+- 路由
+
+  将外部请求转发到具体的微服务实例上，是实现外部访问统一入口的基础
+
+- 过滤
+
+  对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础
+
+### Config
+
+#### 概述
+
+- 由于微服务系统中有大量的服务，而且每个服务都需要自己的配置文件才能运行，所以一套集中式的、动态的配置管理设施是必不可少的。SpringCloud提供了ConfigServer来解决这个问题
+- Config为微服务提供集中化的外部配置支持，配置服务器为各个不同微服务应用的所有环节提供了一个**中心化的外部配置**
+- Config分为服务端和客户端两部分。**服务端也称为分布式配置中心**，它是一个独立的微服务应用，用来连接配置服务器并为客户端提供获取配置信息，加密、解密信息等访问接口
+- 客户端通过指定的配置中心来管理应用资源，以及与业务相关的配置内容，并在启动的时候从配置中心获取和加载配置信息
+- 配置服务器默认采用Git来存储配置信息，这样就有助于对环境配置进行版本管理，并且可以通过Git客户端来方便的管理和访问配置内容
+
+#### 特性
+
+- 集中管理配置文件
+- 不同环境，不同配置，动态化的配置更新，分环境部署
+- 运行期间动态调整配置，不再需要在每个服务部署的机器上编写配置文件，服务会向配置中心统一拉取配置自己的信息
+- 当配置发生变动时，服务不需要重启，即可感知到其变化，并应用新的配置
+- 将配置信息以REST接口的形式暴露
 
 ### SpringCloud——Demo
 
@@ -565,143 +596,282 @@ date: 2021-04-26 14:00:00
 
 10. Hystrix的使用
 
-   断路器：
+  断路器：
 
-   spring_cloud_provider添加依赖
+  spring_cloud_provider添加依赖
+
+  ```
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-hystrix</artifactId>
+      <version>1.4.6.RELEASE</version>
+  </dependency>
+  ```
+
+  重构接口
+
+  ```java
+  @RestController
+  public class DeptController {
+      @Autowired
+      private DeptService deptService;
+  
+      @Autowired
+      private DiscoveryClient discoveryClient;
+  
+      @GetMapping("/dept/get/{id}")
+      @HystrixCommand(fallbackMethod = "hystrixGet")
+      public Dept get(@PathVariable("id") Long id){
+          Dept dept = deptService.queryById(id);
+  
+          if(dept == null){
+              throw new RuntimeException("id:" + id + " 不存在");
+          }
+  
+          return dept;
+      }
+  
+      public Dept hystrixGet(@PathVariable("id") Long id){
+          return new Dept().setDeptno(id).setDname("id:" + id + " 不存在");
+      }
+  
+  }
+  ```
+
+  启动类添加注解
+
+  ```
+  @EnableCircuitBreaker
+  ```
+
+  
+
+  服务降级：
+
+  spring_cloud_api模块，增加降级服务回调类
+
+  ```java
+  @Component
+  public class DeptClientServiceFallbackFactory implements FallbackFactory {
+      @Override
+      public DeptClientService create(Throwable throwable) {
+          return new DeptClientService() {
+              @Override
+              public Dept queryById(Long id) {
+                  return new Dept()
+                          .setDeptno(id)
+                          .setDname("没有对应信息，服务降级");
+              }
+  
+              @Override
+              public List<Dept> queryAll() {
+                  return null;
+              }
+  
+              @Override
+              public boolean addDept(Dept dept) {
+                  return false;
+              }
+          };
+      }
+  }
+  ```
+
+  DeptClientService接口增加注解信息
+
+  ```
+  @FeignClient(value = "SPRINGCLOUD-PROVIDER-DEPT",fallbackFactory = DeptClientServiceFallbackFactory.class)
+  ```
+
+  spring_cloud_feign模块增加有关Hystrix的配置
+
+  ```
+  feign.hystrix.enabled=true
+  ```
+
+  启动相关模块，在spring_cloud_feign模块被关闭时，客户端就可以接收到降级的服务
+
+  
+
+  Hystrix监控页面
+
+  新建模块spring_cloud_consumer_hystrix_dashboard
+
+  依赖同spring_cloud_consumer模块，再添加
+
+  ```
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-hystrix</artifactId>
+      <version>1.4.6.RELEASE</version>
+  </dependency>
+  <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
+      <version>1.4.6.RELEASE</version>
+  </dependency>
+  ```
+
+  启动类添加
+
+  ```
+  @EnableHystrixDashboard
+  ```
+
+  Provider模块注入一个Bean
+
+  ```java
+  @Bean
+  public ServletRegistrationBean hystrixMetricsStreamServlet(){
+      ServletRegistrationBean registrationBean = new ServletRegistrationBean(new HystrixMetricsStreamServlet());
+      registrationBean.addUrlMappings("/actuator/hystrix.stream");
+      return registrationBean;
+  }
+  ```
+
+  启动相关模块
+
+  访问：http://xxxx:xxx/hystrix，可以看到查询页面，中间输入框输入  http://xxxx:xxx/actuator/hystrix.stream，查看具体服务的监控信息
+
+11. Zuul的加入
+
+   创建新模块spring_cloud_zuul，添加依赖
 
    ```
    <dependency>
        <groupId>org.springframework.cloud</groupId>
-       <artifactId>spring-cloud-starter-hystrix</artifactId>
+       <artifactId>spring-cloud-starter-zuul</artifactId>
        <version>1.4.6.RELEASE</version>
    </dependency>
    ```
 
-   重构接口
+   启动类
 
    ```java
-   @RestController
-   public class DeptController {
-       @Autowired
-       private DeptService deptService;
-   
-       @Autowired
-       private DiscoveryClient discoveryClient;
-   
-       @GetMapping("/dept/get/{id}")
-       @HystrixCommand(fallbackMethod = "hystrixGet")
-       public Dept get(@PathVariable("id") Long id){
-           Dept dept = deptService.queryById(id);
-   
-           if(dept == null){
-               throw new RuntimeException("id:" + id + " 不存在");
-           }
-   
-           return dept;
-       }
-   
-       public Dept hystrixGet(@PathVariable("id") Long id){
-           return new Dept().setDeptno(id).setDname("id:" + id + " 不存在");
-       }
-   
-   }
-   ```
-
-   启动类添加注解
-
-   ```
-   @EnableCircuitBreaker
-   ```
-
-   
-
-   服务降级：
-
-   spring_cloud_api模块，增加降级服务回调类
-
-   ```java
-   @Component
-   public class DeptClientServiceFallbackFactory implements FallbackFactory {
-       @Override
-       public DeptClientService create(Throwable throwable) {
-           return new DeptClientService() {
-               @Override
-               public Dept queryById(Long id) {
-                   return new Dept()
-                           .setDeptno(id)
-                           .setDname("没有对应信息，服务降级");
-               }
-   
-               @Override
-               public List<Dept> queryAll() {
-                   return null;
-               }
-   
-               @Override
-               public boolean addDept(Dept dept) {
-                   return false;
-               }
-           };
+   @SpringBootApplication
+   @EnableZuulProxy
+   public class Zuul {
+       public static void main(String[] args) {
+           SpringApplication.run(Zuul.class,args);
        }
    }
    ```
 
-   DeptClientService接口增加注解信息
+   配置文件
 
    ```
-   @FeignClient(value = "SPRINGCLOUD-PROVIDER-DEPT",fallbackFactory = DeptClientServiceFallbackFactory.class)
+   server:
+     port: 9527
+   
+   spring:
+     application:
+       name: springcloud-zuul
+   
+   eureka:
+     client:
+       service-url:
+         defaultZone: http://localhost:7777/eureka/
+     instance:
+         instance-id: spring_cloud_zuul
+         prefer-ip-address: true
+   
+   info:
+     app.name: test_springcloud
+     company.name: cn.waston
+     
+   zuul:
+     routes:
+       mydept.serviceId: springcloud-provider-dept
+       mydept.path: /mydept/**
+     ignored-services: "*" # 隐藏所有微服务的真实信息
+     prefix: /waston #前缀
    ```
 
-   spring_cloud_feign模块增加有关Hystrix的配置
+   启动注册中心、提供者、消费者以及Zuul，此时访问如：
+
+   <http://localhost:9527/mydept/dept/list> 
+
+   也可以得到正确响应，路由效果达到！微服务真实的地址以及服务名被隐藏
+
+12. Config远程配置中心的搭建
+
+   创建一个用来存放配置文件的Git远程仓库，并将前面一些微服务的配置文件提交到仓库
+
+   创建一个springcloud_config_server模块用作Config的**服务端**
+
+   添加依赖
 
    ```
-   feign.hystrix.enabled=true
+   <!--Config-->
+   <dependency>
+       <groupId>org.springframework.cloud</groupId>
+       <artifactId>spring-cloud-config-server</artifactId>
+       <version>2.1.1.RELEASE</version>
+   </dependency>
    ```
 
-   启动相关模块，在spring_cloud_feign模块被关闭时，客户端就可以接收到降级的服务
+   配置文件
+
+   ```
+   server:
+     port: 3344
+   
+   spring:
+     application:
+       name: springcloud-config-server
+     cloud:
+       config:
+         server:
+           git:
+             uri: https://gitee.com/waston_wang/springcloud_config.git #git的地址
+             search-paths: xx/xx #配置文件所在路径
+             username: xxx
+             password: xxx
+   ```
+
+   启动类加上@EnableConfigServer
+
+   启动该模块，用如下的格式在浏览器访问，即可看到配置文件的内容
+
+   ```
+   /{application}/{profile}[/{label}]
+   /{application}-{profile}.yml
+   /{label}/{application}-{profile}.yml
+   /{application}-{profile}.properties
+   /{label}/{application}-{profile}.properties
+   ```
+
+   如：<http://localhost:3344/application-test.yml> 
 
    
 
-   Hystrix监控页面
-
-   新建模块spring_cloud_consumer_hystrix_dashboard
-
-   依赖同spring_cloud_consumer模块，再添加
+   在需要远程配置的微服务上添加依赖：
 
    ```
    <dependency>
        <groupId>org.springframework.cloud</groupId>
-       <artifactId>spring-cloud-starter-hystrix</artifactId>
-       <version>1.4.6.RELEASE</version>
-   </dependency>
-   <dependency>
-       <groupId>org.springframework.cloud</groupId>
-       <artifactId>spring-cloud-starter-hystrix-dashboard</artifactId>
-       <version>1.4.6.RELEASE</version>
+       <artifactId>spring-cloud-starter-config</artifactId>
+       <version>2.1.1.RELEASE</version>
    </dependency>
    ```
 
-   启动类添加
+   添加一个系统级配置bootstrap.yml
 
    ```
-   @EnableHystrixDashboard
+   spring:
+     cloud:
+       config:
+         uri: http://localhost:3344
+         label: master
+         name: config-client #需要从Git上读取的资源名称
+         profile: dev
    ```
 
-   Provider模块注入一个Bean
+   启动该服务，就会从Git仓库中获取配置信息
 
-   ```java
-   @Bean
-   public ServletRegistrationBean hystrixMetricsStreamServlet(){
-       ServletRegistrationBean registrationBean = new ServletRegistrationBean(new HystrixMetricsStreamServlet());
-       registrationBean.addUrlMappings("/actuator/hystrix.stream");
-       return registrationBean;
-   }
-   ```
+   实现了**配置与编码的解耦**
 
-   启动相关模块
 
-   访问：http://xxxx:xxx/hystrix，可以看到查询页面，中间输入框输入  http://xxxx:xxx/actuator/hystrix.stream，查看具体服务的监控信息
 
-   
 
-11. 
+

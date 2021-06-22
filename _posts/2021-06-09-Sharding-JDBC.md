@@ -420,3 +420,4 @@ PS：分库分表后，id生成策略应设置为SNOWFLAKE、UUID等全局唯一
 ```
 
 在方法上添加`@ShardingTransactionType(TransactionType.XA)`即可开启分布式事务
+

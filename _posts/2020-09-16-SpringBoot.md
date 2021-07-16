@@ -384,9 +384,19 @@ Spring中有三种自动装配的方式
    }
    ```
 
-   `@Component`相当于<bean id="xxx" class="cn.waston.pojo.Xxx">
+   `@Component`相当于
 
-   `@Value`相当于<property name="xxx" value="xxx"></property>,该注解也能用在set方法上
+   ```
+   <bean id="xxx" class="cn.waston.pojo.Xxx">
+   ```
+
+   `@Value`相当于
+
+   ```
+   <property name="xxx" value="xxx"></property>
+   ```
+
+   ,该注解也能用在set方法上
 
 ##### 用Java的方式配置Spring——JavaConfig
 

@@ -488,7 +488,7 @@ AOP为Aspect Oriented Programming的缩写，意为：面向切面编程，通�
 
 代理模式是Java设计模式的一种，也是SpringAOP的底层原理
 
-代理模式的作用：将一些公共业务分离出来，由代理类执行以及集中管理，降低耦合
+代理模式的作用：将一些公共业务分离出来，由代理类执行以及集中管理（避免修改原有代码），降低耦合
 
 代理模式的分类：
 
@@ -539,10 +539,220 @@ AOP为Aspect Oriented Programming的缩写，意为：面向切面编程，通�
       }
   }
   ```
+  静态代理模式的缺点显而易见：每个真实类都需要一个代理类，代码量翻倍
 
 - 动态代理
 
-##### Spring——AOP的实现方式
+  与静态代理的不同是，其代理类是动态生成的，不是我们自己写好的
+
+  动态代理的分类：基于接口（JDK动态代理）、基于类（cglib）、Java字节码实现（Javasist）
+
+  JDK动态代理demo:
+
+  ProxyInvocationHandler类（用于生成代理类）
+
+  ```java
+  import java.lang.reflect.InvocationHandler;
+  import java.lang.reflect.Method;
+  import java.lang.reflect.Proxy;
+  
+  public class ProxyInvocationHandler<T> implements InvocationHandler {
+  
+      //被代理的接口
+      private T t;
+  
+      public void setT(T t) {
+          this.t = t;
+      }
+  
+      //生成得到代理类
+      public Object getProxy(){
+          return Proxy.newProxyInstance(this.getClass().getClassLoader(),
+                  t.getClass().getInterfaces(), this);
+      }
+  
+      //处理代理实例，并返回结果
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+  
+          //利用反射机制，调用被代理的方法
+          Object result = method.invoke(t, args);
+          log();
+  
+          return result;
+      }
+  
+      private void log(){
+          System.out.println("生成日志");
+      }
+  }
+  ```
+
+  测试动态代理
+
+  ```java
+  public class Tenant {
+      public static void main(String[] args) {
+          Rent renter = new Renter();
+  
+          //通过调用程序处理角色来处理我们要调用的接口对象
+          ProxyInvocationHandler<Rent> proxyInvocationHandler = new ProxyInvocationHandler<Rent>();
+          proxyInvocationHandler.setT(renter);
+          Rent proxy = (Rent) proxyInvocationHandler.getProxy();
+          proxy.rent();
+      }
+  }
+  ```
+
+  相比于静态代理， 动态代理的优势在于可以很方便的对代理类的函数进行统一的处理，而不用修改每个代理类中的方法，如上面的log方法
+
+  动态代理原理：可以看到代理类对象是通过调用Proxy类的newProxyInstance方法获取到的
+
+  ```java
+  /*loader: 用哪个类加载器去加载代理对象
+  
+  interfaces:动态代理类需要实现的接口
+  
+  h:动态代理方法在执行时，会调用h里面的invoke方法去执行*/
+  public static Object newProxyInstance(ClassLoader loader,
+                                        Class<?>[] interfaces,
+                                        InvocationHandler h)
+  ```
+
+  当我们用代理对象执行任何方法时，都会去调用ProxyInvocationHandler类中的invoke方法，利用反射特性调用该方法，并执行invoke方法中的其他操作，如log()
+
+##### Spring—AOP术语
+
+- 横切关注点：跨越应用程序多个模块的，与我们的业务逻辑无关的，但我们需要关注的方法或功能，如日志、安全、缓存、事务等
+- 切面(ASPECT)：横切关注点，被模块化的特殊对象，是一个类
+- 通知(Advice)：切面必须要完成的工作，是类中的一个方法
+- 目标(Target)：被通知对象
+- 代理(Proxy)：向目标对象应用通知之后创建的对象
+- 切入点(PointCut)：切面通知执行的“地点”的定义
+- 连接点(jointPoint)：与切入点匹配的执行点
+
+![](https://s1.imagehub.cc/images/2021/07/22/AOP748762641cf20235.jpg)
+
+##### Spring—AOP的实现方式
+
+首先需要配置SpringAOP的依赖
+
+```xml
+<dependency>
+    <groupId>org.aspectj</groupId>
+    <artifactId>aspectjweaver</artifactId>
+    <version>1.9.4</version>
+</dependency>
+```
+
+**实现方式一**：使用Spring的API接口+xml
+
+业务接口
+
+```java
+public interface UserService {
+    public void add();
+    public void delete();
+    public void update();
+    public void select();
+}
+```
+
+业务实现类
+
+```java
+public class UserServiceImpl implements UserService {
+    public void add() {
+        System.out.println("增加了一个用户");
+    }
+
+    public void delete() {
+        System.out.println("删除了一个用户");
+    }
+
+    public void update() {
+        System.out.println("更新了一个用户");
+    }
+
+    public void select() {
+        System.out.println("查询了一个用户");
+    }
+}
+```
+
+切面类及通知
+
+```java
+public class BeforeLog implements MethodBeforeAdvice {
+    //该方法会在目标方法调用前被调用
+    public void before(Method method, Object[] objects, Object target) throws Throwable {
+        System.out.println(target.getClass().getName() + "的" + method.getName() + "将被执行");
+    }
+}
+```
+
+```java
+public class AfterLog implements AfterReturningAdvice {
+    //该方法会在目标方法调用后被调用
+    public void afterReturning(Object returnValue, Method method, Object[] objects, Object target) throws Throwable {
+        System.out.println(target.getClass().getName() + "的" + method.getName() + "被执行了，返回值为" + returnValue);
+    }
+}
+```
+
+xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="userService" class="cn.waston.service.UserServiceImpl"/>
+    <bean id="beforeLog" class="cn.waston.log.BeforeLog"/>
+    <bean id="afterLog" class="cn.waston.log.AfterLog"/>
+
+    <!--配置AOP-->
+    <aop:config>
+        <!--切入点 expression表达式，用execution函数来表示要执行的位置-->
+        <aop:pointcut id="pointcut" expression="execution(* cn.waston.service.UserServiceImpl.*(..))"/>
+
+        <!--执行环绕增加-->
+        <aop:advisor advice-ref="beforeLog" pointcut-ref="pointcut"/>
+        <aop:advisor advice-ref="afterLog" pointcut-ref="pointcut"/>
+    </aop:config>
+</beans>
+```
+
+测试
+
+```java
+public class MyTest {
+    public static void main(String[] args) {
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("context.xml");
+        UserService userService = (UserService) context.getBean("userService");
+        userService.add();
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

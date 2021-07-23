@@ -742,17 +742,120 @@ public class MyTest {
 }
 ```
 
+**方式二**：自定义类实现
 
+自定切面类及其通知
 
+```java
+public class MyPointCut {
+    public void before(){
+        System.out.println("-----方法执行前-----");
+    }
 
+    public void after(){
+        System.out.println("-----方法执行后-----");
+    }
+}
+```
 
+xml
 
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
 
+    <bean id="userService" class="cn.waston.service.UserServiceImpl"/>
+    <bean id="beforeLog" class="cn.waston.log.BeforeLog"/>
+    <bean id="afterLog" class="cn.waston.log.AfterLog"/>
 
+    <bean id="myPointCut" class="cn.waston.my.MyPointCut"/>
+    <aop:config>
+        <!--自定义切面-->
+        <aop:aspect ref="myPointCut">
+            <!--切入点-->
+            <aop:pointcut id="point" expression="execution(* cn.waston.service.UserServiceImpl.*(..))"/>
+            <!--通知-->
+            <aop:before method="before" pointcut-ref="point"/>
+            <aop:after method="after" pointcut-ref="point"/>
+        </aop:aspect>
+    </aop:config>
+</beans>
+```
 
+**方式三**：注解式
 
+注解`@Aspect`可以使一个自定义类成为切面类
 
+```java
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.Signature;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 
+@Aspect
+public class AnnotationPointCut {
+
+    @Before("execution(* cn.waston.service.UserServiceImpl.*(..)))")
+    public void before(){
+        System.out.println("-----方法执行前-----");
+    }
+
+    @After("execution(* cn.waston.service.UserServiceImpl.*(..)))")
+    public void after(){
+        System.out.println("-----方法执行后-----");
+    }
+
+    //在环绕增强中，我们可以给定一个参数，代表我们要获取处理切入的点
+    @Around("execution(* cn.waston.service.UserServiceImpl.*(..)))")
+    public void around(ProceedingJoinPoint jp) throws Throwable {
+        System.out.println("---环绕前---");
+
+        //打印切入点签名
+        Signature signature = jp.getSignature();
+        System.out.println("signature:" + signature);
+
+        //执行目标方法
+        Object proceed = jp.proceed();
+        System.out.println("---环绕后---");
+    }
+}
+```
+
+xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="userService" class="cn.waston.service.UserServiceImpl"/>
+    <bean id="beforeLog" class="cn.waston.log.BeforeLog"/>
+    <bean id="afterLog" class="cn.waston.log.AfterLog"/>
+
+    <bean id="annotationPointCut" class="cn.waston.my.AnnotationPointCut"/>
+    <!--开启注解支持-->
+    <aop:aspectj-autoproxy/>
+</beans>
+```
 
 
 

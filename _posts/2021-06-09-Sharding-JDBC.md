@@ -17,7 +17,7 @@ sharding-jdbc是ShardingSphere的其中一个模块
 ##### ShardingSphere
 
 一套开源的分布式数据库中间件解决方案组成的生态圈，它由Sharding-JDBC、Sharding-Proxy和Sharding-Sidecar（计划中）这3款相互独立的产品组成。 **他们均提供标准化的数据分片**、**分布式事务和数据库治理**功能，可适用于如Java同构、异构语言、容器、云原生等各种多样化的应用场景
-![shardingSphere](https://s1.imagehub.cc/images/2021/06/21/shardingSphere8d61c2ab414cd870.jpg)
+![shardingSphere](https://img.wenhairu.com/images/2024/06/01/7zu1s.jpg)
 
 ##### ShardingSphere功能一览
 
@@ -35,7 +35,7 @@ sharding-jdbc是ShardingSphere的其中一个模块
 
 支持的数据库：MySQL，Oracle，SQLServer和PostgreSQL
 
-![sharding-jdbc](https://s1.imagehub.cc/images/2021/06/21/sharding-jdbce449ca7a9bf6e4d5.jpg) 
+![sharding-jdbc](https://img.wenhairu.com/images/2024/06/01/7zamC.jpg) 
 
 ##### Sharding-Proxy
 
